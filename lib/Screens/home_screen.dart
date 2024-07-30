@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_runner_ui/Controllers/home_provider.dart';
+import 'package:flutter_runner_ui/Screens/initial_screen.dart';
+import 'package:flutter_runner_ui/Screens/repository_setup.dart';
+import 'package:flutter_runner_ui/Screens/setup_devices.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    homeProvider.checkDependencies();
+    // homeProvider.initiateDepsCheck();
   }
 
   @override
@@ -29,8 +32,26 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Flutter Version: ${model.flutterVersion}"),
-              Text("Git Version: ${model.gitVersion}"),
+              // Text(" ${model.appState} "),
+              // If loading, show loader.
+              if (model.appState == AppState.loading)
+                const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+
+              // If initial, show initial screen.
+              if (model.appState == AppState.initial)
+                const Expanded(child: InitialScreenState()),
+
+              // If dependencies check is in progress, show text.
+              if (model.appState == AppState.repositorySetup)
+                const Expanded(child: RepoSetupScreen()),
+
+              // If devices setup is in progress, show text.
+              if (model.appState == AppState.checkDevices)
+                const Expanded(child: SetupDevices()),
             ],
           );
         },
